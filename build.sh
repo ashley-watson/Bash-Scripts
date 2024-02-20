@@ -2,13 +2,13 @@
 
 # Grabbing values to input into PKGBUILD file
 
-file=/home/ashley/Github\ Builds/DDogAgent\ Builds/PKGBUILD
+file=/path/to/PKGBUILD
 Version=$(curl --silent "https://github.com/DataDog/datadog-agent/releases" | grep -iE "DataDog/datadog-agent/tree/" | awk '{print $2}' | cut -c "35-40" | head -n1)
 armSha=$(curl -s https://apt.datadoghq.com/dists/stable/7/binary-arm64/Packages | sed -n '/^Package: datadog-agent$/,/SHA256:*/p' | grep -vwi "dbg\|heroku\|iot\|license\|dogstatsd\|architecture\|recommends\|section\|priority\|filename\|installed-size\|size\|sha1\|maintainer\|homepage\|vendor" | tail -n 1 | awk '{print $2}')
 amdSha=$(curl -s https://apt.datadoghq.com/dists/stable/7/binary-amd64/Packages | sed -n '/^Package: datadog-agent$/,/SHA256:*/p' | grep -vwi "dbg\|heroku\|iot\|license\|dogstatsd\|architecture\|recommends\|section\|priority\|filename\|installed-size\|size\|sha1\|maintainer\|homepage\|vendor" | tail -n 1 | awk '{print $2}')
-oldVersion=$(grep -i pkgver /home/ashley/Github\ Builds/DDogAgent\ Builds/PKGBUILD | head -n1 | cut -c 8-13)
-oldAmdHash=$(grep -i -A1 sha256sums_x86_64 /home/ashley/Github\ Builds/DDogAgent\ Builds/PKGBUILD | tail -n1 | sed "s/ //g" | sed "s/'//g" | sed "s/)//g")
-oldArmHash=$(grep -i -A1 sha256sums_aarch64 /home/ashley/Github\ Builds/DDogAgent\ Builds/PKGBUILD | tail -n1 | sed "s/ //g" | sed "s/'//g" | sed "s/)//g")
+oldVersion=$(grep -i pkgver /path/to/PKGBUILD | head -n1 | cut -c 8-13)
+oldAmdHash=$(grep -i -A1 sha256sums_x86_64 /path/to/PKGBUILD | tail -n1 | sed "s/ //g" | sed "s/'//g" | sed "s/)//g")
+oldArmHash=$(grep -i -A1 sha256sums_aarch64 /path/to/PKGBUILD | tail -n1 | sed "s/ //g" | sed "s/'//g" | sed "s/)//g")
 
 # Starting time for trace duration calculation
 StartTime=$(date +%s)
@@ -47,32 +47,32 @@ git commit -m "$comMsg"
 sleep 5
 git push
 sleep 5
-echo "Commit pushed! Please check https://aur.archlinux.org/packages/datadog-agent to make sure the commit took properly!"
+echo "Commit pushed! Please check the AUR to make sure the commit took properly!"
 echo "Done!"
 
 # Ending time and calculating trace duration
 #
-EndTime=$(date +%s)
-duration=$(($EndTime-$StartTime))
-spanId=$(date +%s)
-traceId=$(date +%s)
+#EndTime=$(date +%s)
+#duration=$(($EndTime-$StartTime))
+#spanId=$(date +%s)
+#traceId=$(date +%s)
 
 # Sending trace to Datadog
 #
-curl -X PUT "http://localhost:8126/v0.3/traces" \
--H "Content-Type: application/json" \
--d @- << EOF
-[
-  [
-    {
-      "duration": $duration,
-      "name": "ArchDDogAgent",
-      "resource": "/builder",
-      "service": "agent_checker",
-      "span_id": $spanId,
-      "trace_id": $traceId,
-      "type": "custom"
-    }
-  ]
-]
-EOF
+#curl -X PUT "http://localhost:8126/v0.3/traces" \
+#-H "Content-Type: application/json" \
+#-d @- << EOF
+#[
+#  [
+#    {
+#      "duration": $duration,
+#      "name": "ArchDDogAgent",
+#      "resource": "/builder",
+#      "service": "agent_checker",
+#      "span_id": $spanId,
+#      "trace_id": $traceId,
+#      "type": "custom"
+#    }
+#  ]
+#]
+#EOF
